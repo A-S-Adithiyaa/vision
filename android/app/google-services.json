@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "482957862211",
+    "project_id": "vision-e0290",
+    "storage_bucket": "vision-e0290.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482957862211:android:fcb0b41a9b053366e1fbf6",
+        "android_client_info": {
+          "package_name": "com.example.vision"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSbb455ib07PBefPXqxf91_CluTQl-XKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

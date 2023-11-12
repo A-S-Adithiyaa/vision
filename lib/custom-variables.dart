@@ -14,6 +14,7 @@ class MyColors {
   static const Color comet = Color.fromRGBO(92, 93, 122, 1);
   static const Color primaryWhite = Color.fromRGBO(250, 250, 250, 1);
   static const Color primaryBlue = Color.fromRGBO(33, 150, 243, 1);
+  static const Color inputBG = Color.fromRGBO(211, 246, 255, 1);
 }
 
 // Define the font family
@@ -57,4 +58,52 @@ class _MyCustomIndicatorPainter extends BoxPainter {
 
     canvas.drawCircle(circleCenter, radius, paint);
   }
+}
+
+void navigateWithCustomTransitionForward(
+    BuildContext context, Widget targetPage) {
+  Navigator.of(context).pushReplacement(
+    PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => targetPage,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.easeInOutQuart;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 800),
+    ),
+  );
+}
+
+void navigateWithCustomReverseTransition(
+    BuildContext context, Widget targetPage) {
+  Navigator.of(context).pushReplacement(
+    PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => targetPage,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(-1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.easeInOutQuart;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 800),
+    ),
+  );
 }

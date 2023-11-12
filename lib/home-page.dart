@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:vision/authentication/signup-screen.dart';
 import 'package:vision/custom-variables.dart';
 
 class HomePageCaller extends StatelessWidget {
@@ -24,14 +26,26 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Welcome, W!K!',
-          style: getNunito(
-              fontSize: 27,
-              fontWeight: FontWeight.w500,
-              color: Colors
-                  .black), // Example of using light style in the app bar title
+          style: TextStyle(
+            fontSize: 27,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
         ),
-        backgroundColor: MyColors.primaryWhite,
+        backgroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: MyColors.martinique,
+            ),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              navigateWithCustomReverseTransition(context, SignUpScreen());
+            },
+          ),
+        ],
       ),
       body: const TabBarView(
         children: [
@@ -42,11 +56,11 @@ class HomePage extends StatelessWidget {
       ),
       bottomNavigationBar: Container(
         child: TabBar(
-          indicator: MyCustomIndicator(), // Use the custom indicator
+          indicator: MyCustomIndicator(),
           tabs: const [
-            Tab(icon: Icon(Icons.home, color: MyColors.martinique)),
-            Tab(icon: Icon(Icons.qr_code_scanner, color: MyColors.martinique)),
-            Tab(icon: Icon(Icons.person, color: MyColors.martinique)),
+            Tab(icon: Icon(Icons.home, color: Colors.black)),
+            Tab(icon: Icon(Icons.qr_code_scanner, color: Colors.black)),
+            Tab(icon: Icon(Icons.person, color: Colors.black)),
           ],
         ),
       ),
