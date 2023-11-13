@@ -30,14 +30,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       // Set display name for the user
       User? user = authResult.user;
-      await user?.updateProfile(displayName: usernameController.text);
-      await user?.reload();
+      // await user?.updateProfile(displayName: usernameController.text);
+      // await user?.reload();
 
       // Store additional information in Firestore
-      // await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
-      //   'username': usernameController.text,
-      //   'phoneNumber': phoneNumberController.text, // You can add the user's phone number here
-      // });
+      await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+        'username': usernameController.text,
+        'phoneNumber': phoneNumberController
+            .text, // You can add the user's phone number here
+      });
 
       // Navigate to HomePage after successful signup
       navigateWithCustomTransitionForward(context, const HomePageCaller());

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 // git token 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
@@ -107,4 +108,28 @@ void navigateWithCustomReverseTransition(
       transitionDuration: const Duration(milliseconds: 800),
     ),
   );
+}
+
+class FirestoreService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<Map<String, dynamic>> getUserInfo(String userId) async {
+    try {
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('users').doc(userId).get();
+
+      if (userSnapshot.exists) {
+        // Extract username and phoneNumber from Firestore
+        String username = userSnapshot['username'];
+        String phoneNumber = userSnapshot['phoneNumber'];
+
+        return {'username': username, 'phoneNumber': phoneNumber};
+      } else {
+        return {'username': 'Guest', 'phoneNumber': 'xxxxxxxxxx'};
+      }
+    } catch (e) {
+      print('Error retrieving user info: $e');
+      return {'username': 'Guest', 'phoneNumber': 'No Phone Number'};
+    }
+  }
 }

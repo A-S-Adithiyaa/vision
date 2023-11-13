@@ -4,6 +4,7 @@ import 'package:vision/authentication/signup-login-page.dart';
 import 'package:vision/authentication/signup-screen.dart';
 import 'package:vision/components/profile-page.dart';
 import 'package:vision/custom-variables.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePageCaller extends StatelessWidget {
   const HomePageCaller({Key? key}) : super(key: key);
@@ -47,19 +48,32 @@ class HomePage extends StatelessWidget {
 }
 
 class HomeSection extends StatelessWidget {
+  final FirestoreService _firestoreService = FirestoreService();
+
   @override
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
-    final String username = user?.displayName ?? "Guest";
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome, $username!',
-            style: getNunito(
-              fontSize: 27,
-              fontWeight: FontWeight.w600,
-              color: MyColors.primaryBlack,
-            )),
+        title: FutureBuilder(
+          future: _firestoreService.getUserInfo(user?.uid ?? ''),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Welcome, Loading...');
+            } else {
+              print(snapshot);
+              return Text(
+                'Welcome, ${snapshot.data?['username'] ?? 'Guest'}!',
+                style: getNunito(
+                  fontSize: 27,
+                  fontWeight: FontWeight.w600,
+                  color: MyColors.primaryBlack,
+                ),
+              );
+            }
+          },
+        ),
         backgroundColor: MyColors.primaryWhite,
         elevation: 0,
         actions: [
