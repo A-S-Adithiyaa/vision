@@ -15,6 +15,7 @@ class MyColors {
   static const Color primaryWhite = Color.fromRGBO(250, 250, 250, 1);
   static const Color primaryBlue = Color.fromRGBO(33, 150, 243, 1);
   static const Color inputBG = Color.fromRGBO(211, 246, 255, 1);
+  static const Color primaryBlack = Color.fromRGBO(0, 0, 0, 1);
 }
 
 // Define the font family

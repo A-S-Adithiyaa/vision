@@ -1,12 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:vision/authentication/login-screen.dart';
 import 'package:vision/custom-variables.dart';
+import 'package:vision/home-page.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({Key? key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -14,17 +14,33 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
 
   bool isPasswordVisible = false;
 
   Future<void> _signUp(BuildContext context) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential authResult =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+
+      // Set display name for the user
+      User? user = authResult.user;
+      await user?.updateProfile(displayName: usernameController.text);
+      await user?.reload();
+
+      // Store additional information in Firestore
+      // await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+      //   'username': usernameController.text,
+      //   'phoneNumber': phoneNumberController.text, // You can add the user's phone number here
+      // });
+
+      // Navigate to HomePage after successful signup
+      navigateWithCustomTransitionForward(context, const HomePageCaller());
     } catch (e) {
       // Handle signup errors
       print('Error: $e');
@@ -68,9 +84,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 labelText: 'Email',
                 labelStyle: getNunito(fontWeight: FontWeight.bold),
                 filled: true,
-                fillColor: MyColors.inputBG, // Background color
+                fillColor: MyColors.inputBG,
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.0)),
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -80,9 +97,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 labelText: 'Password',
                 labelStyle: getNunito(fontWeight: FontWeight.bold),
                 filled: true,
-                fillColor: MyColors.inputBG, // Background color
+                fillColor: MyColors.inputBG,
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.0)),
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -95,6 +113,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               obscureText: !isPasswordVisible,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                labelStyle: getNunito(fontWeight: FontWeight.bold),
+                filled: true,
+                fillColor: MyColors.inputBG,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: phoneNumberController,
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
+                labelStyle: getNunito(fontWeight: FontWeight.bold),
+                filled: true,
+                fillColor: MyColors.inputBG,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(

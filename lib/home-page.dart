@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:vision/authentication/signup-login-page.dart';
 import 'package:vision/authentication/signup-screen.dart';
+import 'package:vision/components/profile-page.dart';
 import 'package:vision/custom-variables.dart';
 
 class HomePageCaller extends StatelessWidget {
@@ -23,35 +25,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Welcome, W!K!',
-          style: TextStyle(
-            fontSize: 27,
-            fontWeight: FontWeight.w500,
-            color: Colors.black,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: MyColors.martinique,
-            ),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              navigateWithCustomReverseTransition(context, SignUpScreen());
-            },
-          ),
-        ],
-      ),
-      body: const TabBarView(
+      body: TabBarView(
         children: [
           HomeSection(),
           ScanSection(),
-          ProfileSection(),
+          ProfilePage(),
         ],
       ),
       bottomNavigationBar: Container(
@@ -69,13 +47,35 @@ class HomePage extends StatelessWidget {
 }
 
 class HomeSection extends StatelessWidget {
-  const HomeSection({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: MyColors.primaryWhite,
-      child: Center(
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String username = user?.displayName ?? "Guest";
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Welcome, $username!',
+            style: getNunito(
+              fontSize: 27,
+              fontWeight: FontWeight.w600,
+              color: MyColors.primaryBlack,
+            )),
+        backgroundColor: MyColors.primaryWhite,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: MyColors.martinique,
+            ),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              navigateWithCustomReverseTransition(context, SignupLoginPage());
+            },
+          ),
+        ],
+      ),
+      body: Center(
         child: Text(
           'Home Content',
           style: getNunito(fontSize: 20),
