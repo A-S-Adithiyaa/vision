@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vision/authentication/login-screen.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vision/custom-variables.dart';
 import 'package:vision/home-page.dart';
 
@@ -19,6 +22,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController phoneNumberController = TextEditingController();
 
   bool isPasswordVisible = false;
+  File? _image;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future<String> uploadImageToFirestoreStorage(File imageFile) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      firebase_storage.Reference reference = firebase_storage
+          .FirebaseStorage.instance
+          .ref()
+          .child('profile_images/$fileName.jpg');
+
+      firebase_storage.UploadTask uploadTask = reference.putFile(imageFile);
+
+      // Wait until the image is uploaded
+      await uploadTask.whenComplete(() => null);
+
+      // Get the download URL
+      String downloadURL = await reference.getDownloadURL();
+
+      return downloadURL;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return '';
+    }
+  }
 
   Future<void> _signUp(BuildContext context) async {
     try {
@@ -30,14 +70,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       // Set display name for the user
       User? user = authResult.user;
-      // await user?.updateProfile(displayName: usernameController.text);
-      // await user?.reload();
+
+      // Upload profile photo to Firestore Storage
+      String imageUrl = '';
+      if (_image != null) {
+        imageUrl = await uploadImageToFirestoreStorage(_image!);
+      }
+
+      print(imageUrl);
 
       // Store additional information in Firestore
       await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+        'profileImageUrl': imageUrl,
         'username': usernameController.text,
-        'phoneNumber': phoneNumberController
-            .text, // You can add the user's phone number here
+        'phoneNumber': phoneNumberController.text,
       });
 
       // Navigate to HomePage after successful signup
@@ -72,10 +118,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Flexible(
-              child: Image.asset(
-                'assets/images/splashScreenLogo.png',
-                height: 300,
-                width: 300,
+              child: GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _image != null ? FileImage(_image!) : null,
+                  child: _image == null
+                      ? Icon(
+                          Icons.camera_alt,
+                          size: 40,
+                          color: Colors.white,
+                        )
+                      : null,
+                ),
               ),
             ),
             SizedBox(height: 16),

@@ -122,14 +122,27 @@ class FirestoreService {
         // Extract username and phoneNumber from Firestore
         String username = userSnapshot['username'];
         String phoneNumber = userSnapshot['phoneNumber'];
+        String profileImageUrl = userSnapshot['profileImageUrl'];
 
-        return {'username': username, 'phoneNumber': phoneNumber};
+        return {
+          'username': username,
+          'phoneNumber': phoneNumber,
+          'profileImageUrl': profileImageUrl
+        };
       } else {
-        return {'username': 'Guest', 'phoneNumber': 'xxxxxxxxxx'};
+        return {
+          'username': 'Guest',
+          'phoneNumber': 'xxxxxxxxxx',
+          'profileImageUrl': ''
+        };
       }
     } catch (e) {
       print('Error retrieving user info: $e');
-      return {'username': 'Guest', 'phoneNumber': 'No Phone Number'};
+      return {
+        'username': 'Guest',
+        'phoneNumber': 'xxxxxxxxxx',
+        'profileImageUrl': ''
+      };
     }
   }
 }

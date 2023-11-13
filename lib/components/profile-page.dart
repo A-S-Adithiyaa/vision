@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:vision/components/edit-profile.dart';
 import 'package:vision/custom-variables.dart';
 
 class ProfilePage extends StatelessWidget {
   final User? user = FirebaseAuth.instance.currentUser;
   final FirestoreService _firestoreService = FirestoreService();
+
+  ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,9 @@ class ProfilePage extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           } else {
             String username = snapshot.data?['username'] ?? 'Guest';
-            String phoneNumber = snapshot.data?['phoneNumber'] ?? 'No Phone Number';
+            String phoneNumber =
+                snapshot.data?['phoneNumber'] ?? 'No Phone Number';
+            String profileImageUrl = snapshot.data?['profileImageUrl'] ?? '';
 
             return Column(
               children: [
@@ -25,21 +30,26 @@ class ProfilePage extends StatelessWidget {
                     height: 100,
                   ),
                 ),
-                ClipOval(
-                  child: Container(
-                    width: 135.0, // Adjust the size as needed
-                    height: 135.0, // Adjust the size as needed
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: MyColors.primaryBlue, // Neon border color
-                        width: 2.0,
-                      ),
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(
-                          'assets/images/splashScreenLogo.png',
+                Flexible(
+                  child: ClipOval(
+                    child: Container(
+                      width: 135.0, // Adjust the size as needed
+                      height: 135.0, // Adjust the size as needed
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: MyColors.primaryBlue, // Neon border color
+                          width: 2.0,
                         ),
-                        fit: BoxFit.contain,
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: profileImageUrl.isNotEmpty
+                              ? NetworkImage(profileImageUrl)
+                                  as ImageProvider<Object>
+                              : const AssetImage(
+                                      'assets/images/splashScreenLogo.png')
+                                  as ImageProvider<Object>,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -66,18 +76,27 @@ class ProfilePage extends StatelessWidget {
                             "Personal Information",
                             style: getNunito(fontSize: 18),
                           ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.drive_file_rename_outline_outlined,
-                                color: MyColors.primaryBlue,
-                              ),
-                              Text(
-                                "Edit",
-                                style: getNunito(
-                                    fontSize: 18, color: MyColors.primaryBlue),
-                              ),
-                            ],
+                          GestureDetector(
+                            onTap: () => {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditProfilePage()))
+                            },
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.drive_file_rename_outline_outlined,
+                                  color: MyColors.primaryBlue,
+                                ),
+                                Text(
+                                  "Edit",
+                                  style: getNunito(
+                                      fontSize: 18,
+                                      color: MyColors.primaryBlue),
+                                ),
+                              ],
+                            ),
                           )
                         ],
                       ),
