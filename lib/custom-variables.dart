@@ -119,21 +119,25 @@ class FirestoreService {
           await _firestore.collection('users').doc(userId).get();
 
       if (userSnapshot.exists) {
-        // Extract username and phoneNumber from Firestore
+        // Extract username, phoneNumber, profileImageUrl, and history from Firestore
         String username = userSnapshot['username'];
         String phoneNumber = userSnapshot['phoneNumber'];
         String profileImageUrl = userSnapshot['profileImageUrl'];
+        List<Map<String, dynamic>> history =
+            List<Map<String, dynamic>>.from(userSnapshot['history'] ?? []);
 
         return {
           'username': username,
           'phoneNumber': phoneNumber,
-          'profileImageUrl': profileImageUrl
+          'profileImageUrl': profileImageUrl,
+          'history': history,
         };
       } else {
         return {
           'username': 'Guest',
           'phoneNumber': 'xxxxxxxxxx',
-          'profileImageUrl': ''
+          'profileImageUrl': '',
+          'history': [],
         };
       }
     } catch (e) {
@@ -141,8 +145,40 @@ class FirestoreService {
       return {
         'username': 'Guest',
         'phoneNumber': 'xxxxxxxxxx',
-        'profileImageUrl': ''
+        'profileImageUrl': '',
+        'history': [],
       };
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getLinksData() async {
+    try {
+      DocumentSnapshot linksSnapshot = await _firestore
+          .collection('links')
+          .doc('mBuZ4l0AveQkEIZEOo6j')
+          .get();
+
+      if (linksSnapshot.exists) {
+        // Extract the "fields" array from Firestore
+        List<dynamic> fieldsArray = linksSnapshot['links'] ?? [];
+        print(fieldsArray);
+
+        // Convert the array into a list of maps
+        List<Map<String, dynamic>> linksData = List<Map<String, dynamic>>.from(
+          fieldsArray.map(
+            (field) => {
+              'origamiName': field['origamiName'] ?? '',
+              'videoLink': field['videoLink'] ?? '',
+            },
+          ),
+        );
+        return linksData;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error retrieving links data: $e');
+      return [];
     }
   }
 }

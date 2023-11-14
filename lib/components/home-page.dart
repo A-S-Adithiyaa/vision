@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,57 +8,25 @@ import 'package:vision/custom-variables.dart';
 class HomePage extends StatelessWidget {
   final FirestoreService _firestoreService = FirestoreService();
 
-  Future<List<Map<String, String>>> getVideoViewList() async {
-    // Simulating data retrieval, replace this with actual data fetching logic
-    await Future.delayed(Duration(seconds: 2));
+  Future<List<Map<String, dynamic>>> getVideoViewList() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
 
-    return [
-      {
-        "object": "Video 1",
-        "date of view": "2023-01-01",
-        "link to video": "https://flutter.dev"
-      },
-      {
-        "object": "Video 2",
-        "date of view": "2023-01-02",
-        "link to video": "https://www.youtube.com/watch?v=j_LEN1zAoV8"
-      },
-      {
-        "object": "Video 3",
-        "date of view": "2023-01-03",
-        "link to video": "https://www.youtube.com/watch?v=j_LEN1zAoV8"
-      },
-      {
-        "object": "Video 1",
-        "date of view": "2023-01-01",
-        "link to video": "https://example.com/video1"
-      },
-      {
-        "object": "Video 2",
-        "date of view": "2023-01-02",
-        "link to video": "https://example.com/video2"
-      },
-      {
-        "object": "Video 3",
-        "date of view": "2023-01-03",
-        "link to video": "https://example.com/video3"
-      },
-      {
-        "object": "Video 1",
-        "date of view": "2023-01-01",
-        "link to video": "https://example.com/video1"
-      },
-      {
-        "object": "Video 2",
-        "date of view": "2023-01-02",
-        "link to video": "https://example.com/video2"
-      },
-      {
-        "object": "Video 3",
-        "date of view": "2023-01-03",
-        "link to video": "https://example.com/video3"
-      },
-    ];
+      // Check if the user is authenticated
+      if (user != null) {
+        // Fetch user's history from Firestore
+        final userInfo = await _firestoreService.getUserInfo(user.uid);
+        List<Map<String, dynamic>> history = userInfo['history'] ?? [];
+
+        return history;
+      } else {
+        // User not authenticated, return empty list
+        return [];
+      }
+    } catch (e) {
+      print('Error retrieving video view list: $e');
+      return [];
+    }
   }
 
   @override
@@ -109,12 +78,35 @@ class HomePage extends StatelessWidget {
                             color: Colors.black, // Adjust color as needed
                           ),
                         ),
-                        Text(
-                          '14/11/2023',
-                          style: getNunito(
-                            fontSize: 18,
-                            color: Colors.black, // Adjust color as needed
-                          ),
+                        FutureBuilder(
+                          future:
+                              _firestoreService.getUserInfo(user?.uid ?? ''),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Text(
+                                'Loading...',
+                                style: getNunito(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              );
+                            } else {
+                              var lastLoginTime = user?.metadata.lastSignInTime;
+                              var formattedLastLoginTime = lastLoginTime != null
+                                  ? DateFormat('dd-MM-yyyy')
+                                      .format(lastLoginTime)
+                                  : 'N/A';
+
+                              return Text(
+                                formattedLastLoginTime,
+                                style: getNunito(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -183,8 +175,8 @@ class HomePage extends StatelessWidget {
             bottom: 16,
             child: FutureBuilder(
               future: getVideoViewList(),
-              builder:
-                  (context, AsyncSnapshot<List<Map<String, String>>> snapshot) {
+              builder: (context,
+                  AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                     child: SizedBox(
@@ -215,7 +207,7 @@ class HomePage extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    item['object'] ?? '',
+                                    item['origamiName'] ?? '',
                                     style: getNunito(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -226,7 +218,7 @@ class HomePage extends StatelessWidget {
                                     width: 25,
                                   ),
                                   Text(
-                                    item['date of view'] ?? '',
+                                    item['timeOfView'] ?? '',
                                     style: getNunito(
                                       fontSize: 14,
                                       color: MyColors.primaryBlack,
@@ -241,8 +233,8 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                           onTap: () async {
-                            String linkToOpen = item[
-                                'link to video']!; // Replace with your link
+                            String linkToOpen =
+                                item['videoLink']!; // Replace with your link
 
                             // if (await canLaunch(linkToOpen)) {
                             await launch(linkToOpen);

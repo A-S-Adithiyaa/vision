@@ -4,6 +4,7 @@ import 'package:vision/authentication/signup-login-page.dart';
 import 'package:vision/authentication/signup-screen.dart';
 import 'package:vision/components/home-page.dart';
 import 'package:vision/components/profile-page.dart';
+import 'package:vision/components/scan-page.dart';
 import 'package:vision/custom-variables.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -30,7 +31,7 @@ class AppPage extends StatelessWidget {
       body: TabBarView(
         children: [
           HomePage(),
-          ScanSection(),
+          ScanPage(),
           ProfilePage(),
         ],
       ),
