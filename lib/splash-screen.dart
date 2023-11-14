@@ -3,7 +3,7 @@ import 'package:vision/authentication/signup-login-page.dart';
 import 'package:vision/authentication/signup-screen.dart';
 import 'package:vision/custom-variables.dart';
 import 'dart:async';
-import 'package:vision/home-page.dart';
+import 'package:vision/app-page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -85,7 +85,7 @@ class AuthenticationScreen extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasData) {
-          return const HomePageCaller();
+          return const AppPageCaller();
         } else {
           return const SignupLoginPage();
         }

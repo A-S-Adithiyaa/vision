@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vision/authentication/login-screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vision/custom-variables.dart';
-import 'package:vision/home-page.dart';
+import 'package:vision/app-page.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key});
@@ -87,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
 
       // Navigate to HomePage after successful signup
-      navigateWithCustomTransitionForward(context, const HomePageCaller());
+      navigateWithCustomTransitionForward(context, const AppPageCaller());
     } catch (e) {
       // Handle signup errors
       print('Error: $e');
@@ -135,6 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             SizedBox(height: 16),
             TextField(
+              style: getNunito(),
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
@@ -148,6 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 8),
             TextField(
+              style: getNunito(),
               controller: passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -172,6 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 8),
             TextField(
+              style: getNunito(),
               controller: usernameController,
               decoration: InputDecoration(
                 labelText: 'Username',
@@ -185,6 +188,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 8),
             TextField(
+              style: getNunito(),
               controller: phoneNumberController,
               decoration: InputDecoration(
                 labelText: 'Phone Number',

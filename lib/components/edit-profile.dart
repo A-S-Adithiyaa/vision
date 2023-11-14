@@ -139,6 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: Column(
                         children: [
                           TextField(
+                            style: getNunito(),
                             controller: usernameController,
                             decoration: InputDecoration(
                               labelText: 'Username',
@@ -153,6 +154,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           SizedBox(height: 10),
                           TextField(
+                            style: getNunito(),
                             controller: phoneNumberController,
                             decoration: InputDecoration(
                               labelText: 'Phone Number',
@@ -199,7 +201,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                   Navigator.pop(context); // Close the EditProfilePage
                 },
-                child: Text('Save Changes'),
+                child: Text(
+                  'Save Changes',
+                  style: getNunito(),
+                ),
                 style: ElevatedButton.styleFrom(
                   fixedSize: Size(150, 40),
                   backgroundColor: MyColors.comet,

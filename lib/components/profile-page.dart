@@ -32,25 +32,38 @@ class ProfilePage extends StatelessWidget {
                 ),
                 Flexible(
                   child: ClipOval(
-                    child: Container(
-                      width: 135.0, // Adjust the size as needed
-                      height: 135.0, // Adjust the size as needed
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: MyColors.primaryBlue, // Neon border color
-                          width: 2.0,
-                        ),
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: profileImageUrl.isNotEmpty
-                              ? NetworkImage(profileImageUrl)
-                                  as ImageProvider<Object>
-                              : const AssetImage(
-                                      'assets/images/splashScreenLogo.png')
-                                  as ImageProvider<Object>,
+                    child: Image.network(
+                      profileImageUrl,
+                      width: 135.0,
+                      height: 135.0,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return SizedBox(
+                            width: 135.0,
+                            height: 135.0,
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      (loadingProgress.expectedTotalBytes ?? 1)
+                                  : null,
+                            ),
+                          );
+                        }
+                      },
+                      errorBuilder: (BuildContext context, Object error,
+                          StackTrace? stackTrace) {
+                        // On error, return the AssetImage
+                        return Image.asset(
+                          'assets/images/splashScreenLogo.png',
+                          width: 135.0,
+                          height: 135.0,
                           fit: BoxFit.cover,
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ),

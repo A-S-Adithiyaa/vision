@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:vision/authentication/signup-screen.dart';
 import 'package:vision/custom-variables.dart';
-import 'package:vision/home-page.dart';
+import 'package:vision/app-page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       // Navigate to HomePageCaller after successful login
-      navigateWithCustomTransitionForward(context, const HomePageCaller());
+      navigateWithCustomTransitionForward(context, const AppPageCaller());
     } catch (e) {
       // Handle login errors
       print('Error: $e');
@@ -61,12 +61,13 @@ class _LoginScreenState extends State<LoginScreen> {
             Flexible(
               child: Image.asset(
                 'assets/images/splashScreenLogo.png',
-                height: 300,
-                width: 300,
+                height: 250,
+                width: 250,
               ),
             ),
             SizedBox(height: 16),
             TextField(
+              style: getNunito(),
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
@@ -79,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 8),
             TextField(
+              style: getNunito(),
               controller: passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
