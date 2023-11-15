@@ -87,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
 
       // Navigate to HomePage after successful signup
-      navigateWithCustomTransitionForward(context, const AppPageCaller());
+      navigateWithCustomTransitionForward(context, const AppPage());
     } catch (e) {
       // Handle signup errors
       print('Error: $e');

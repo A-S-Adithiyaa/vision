@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,6 +8,8 @@ import 'package:vision/custom-variables.dart';
 
 class HomePage extends StatelessWidget {
   final FirestoreService _firestoreService = FirestoreService();
+
+  HomePage({super.key});
 
   Future<List<Map<String, dynamic>>> getVideoViewList() async {
     try {
@@ -145,12 +148,30 @@ class HomePage extends StatelessWidget {
                             color: Colors.black, // Adjust color as needed
                           ),
                         ),
-                        Text(
-                          'Fighter Jet',
-                          style: getNunito(
-                            fontSize: 18,
-                            color: Colors.black, // Adjust color as needed
-                          ),
+                        FutureBuilder(
+                          future:
+                              _firestoreService.getUserInfo(user?.uid ?? ''),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Text(
+                                'Loading...',
+                                style: getNunito(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              );
+                            } else {
+                              print(snapshot.data);
+                              return Text(
+                                "${snapshot.data?['recentOrigami'] ?? 'NIL'}",
+                                style: getNunito(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -193,7 +214,7 @@ class HomePage extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     itemCount: snapshot.data?.length ?? 0,
                     itemBuilder: (context, index) {
-                      final item = snapshot.data![index];
+                      final item = snapshot.data![index]; 
                       return Card(
                         // color: MyColors.inputBG,
                         margin: EdgeInsets.all(4),
@@ -218,7 +239,13 @@ class HomePage extends StatelessWidget {
                                     width: 25,
                                   ),
                                   Text(
-                                    item['timeOfView'] ?? '',
+                                    item['timeOfView'] != null
+                                        ? DateFormat('dd-MM-yyyy HH:mm:ss')
+                                            .format(
+                                            (item['timeOfView'] as Timestamp)
+                                                .toDate(),
+                                          )
+                                        : '',
                                     style: getNunito(
                                       fontSize: 14,
                                       color: MyColors.primaryBlack,

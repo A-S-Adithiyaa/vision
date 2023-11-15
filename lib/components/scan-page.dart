@@ -70,17 +70,17 @@ class _ScanPageState extends State<ScanPage> {
 
                       String userId =
                           FirebaseAuth.instance.currentUser?.uid ?? '';
-
+                      print(userId);
                       // Add the entry to the user's history array
                       await _firestore.collection('users').doc(userId).update({
                         'history': FieldValue.arrayUnion([
                           {
                             'origamiName': item['origamiName'] ?? '',
-                            'timeOfView': DateFormat('dd-MM-yyyy')
-                                .format(DateTime.now().toUtc()),
+                            'timeOfView': DateTime.now().toUtc(),
                             'videoLink': linkToOpen,
                           },
                         ]),
+                        'recentOrigami': item['origamiName'],
                       });
 
                       // if (await canLaunch(linkToOpen)) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:vision/authentication/signup-login-page.dart';
 import 'package:vision/components/edit-profile.dart';
 import 'package:vision/custom-variables.dart';
 
@@ -197,6 +198,56 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               )
                             ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Utilities",
+                        style: getNunito(fontSize: 18),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: MyColors.inputBG,
+                              borderRadius: BorderRadius.circular(15)),
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await FirebaseAuth.instance.signOut();
+                                      navigateWithCustomReverseTransition(
+                                          context, SignupLoginPage());
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Log Out",
+                                          style: getNunito(fontSize: 17),
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        Icon(Icons.logout),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )

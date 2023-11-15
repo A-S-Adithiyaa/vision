@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       // Navigate to HomePageCaller after successful login
-      navigateWithCustomTransitionForward(context, const AppPageCaller());
+      navigateWithCustomTransitionForward(context, const AppPage());
     } catch (e) {
       // Handle login errors
       print('Error: $e');

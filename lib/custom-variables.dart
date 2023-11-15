@@ -17,6 +17,11 @@ class MyColors {
   static const Color primaryBlue = Color.fromRGBO(33, 150, 243, 1);
   static const Color inputBG = Color.fromRGBO(211, 246, 255, 1);
   static const Color primaryBlack = Color.fromRGBO(0, 0, 0, 1);
+
+  static const Color blue1 = Color.fromRGBO(0, 169, 255, 1);
+  static const Color blue2 = Color.fromRGBO(137, 207, 243, 1);
+  static const Color blue3 = Color.fromRGBO(160, 233, 255, 1);
+  static const Color blue4 = Color.fromRGBO(205, 245, 253, 1);
 }
 
 // Define the font family
@@ -123,14 +128,23 @@ class FirestoreService {
         String username = userSnapshot['username'];
         String phoneNumber = userSnapshot['phoneNumber'];
         String profileImageUrl = userSnapshot['profileImageUrl'];
+        String recentOrigami = userSnapshot['recentOrigami'];
         List<Map<String, dynamic>> history =
             List<Map<String, dynamic>>.from(userSnapshot['history'] ?? []);
+        print({
+          'username': username,
+          'phoneNumber': phoneNumber,
+          'profileImageUrl': profileImageUrl,
+          'history': history,
+          'recentOrigami': recentOrigami,
+        });
 
         return {
           'username': username,
           'phoneNumber': phoneNumber,
           'profileImageUrl': profileImageUrl,
           'history': history,
+          'recentOrigami': recentOrigami,
         };
       } else {
         return {
@@ -138,6 +152,7 @@ class FirestoreService {
           'phoneNumber': 'xxxxxxxxxx',
           'profileImageUrl': '',
           'history': [],
+          'recentOrigami': 'NIL'
         };
       }
     } catch (e) {
@@ -147,6 +162,7 @@ class FirestoreService {
         'phoneNumber': 'xxxxxxxxxx',
         'profileImageUrl': '',
         'history': [],
+        'recentOrigami': 'NIL'
       };
     }
   }

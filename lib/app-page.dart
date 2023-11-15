@@ -8,35 +8,55 @@ import 'package:vision/components/scan-page.dart';
 import 'package:vision/custom-variables.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AppPageCaller extends StatelessWidget {
-  const AppPageCaller({Key? key}) : super(key: key);
+class AppPage extends StatefulWidget {
+  const AppPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 3, // Number of tabs
-        child: AppPage(),
-      ),
-    );
-  }
+  _AppPageState createState() => _AppPageState();
 }
 
-class AppPage extends StatelessWidget {
-  const AppPage({Key? key}) : super(key: key);
+class _AppPageState extends State<AppPage> with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TabBarView(
-        children: [
-          HomePage(),
-          ScanPage(),
-          ProfilePage(),
-        ],
+      body: WillPopScope(
+        onWillPop: () async {
+          // Check if the widget is still mounted
+          if (!mounted) return false;
+
+          // If we are on the second or third tab, switch to the first tab
+          if (_tabController.index != 0) {
+            _tabController.animateTo(0);
+            return false; // Prevent default back button behavior
+          }
+          return true; // Allow default back button behavior
+        },
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            HomePage(),
+            ScanPage(),
+            ProfilePage(),
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         child: TabBar(
+          controller: _tabController,
           indicator: MyCustomIndicator(),
           tabs: const [
             Tab(icon: Icon(Icons.home, color: Colors.black)),
@@ -44,72 +64,6 @@ class AppPage extends StatelessWidget {
             Tab(icon: Icon(Icons.person, color: Colors.black)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class AppSection extends StatelessWidget {
-  final FirestoreService _firestoreService = FirestoreService();
-
-  @override
-  Widget build(BuildContext context) {
-    final User? user = FirebaseAuth.instance.currentUser;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: FutureBuilder(
-          future: _firestoreService.getUserInfo(user?.uid ?? ''),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Welcome, Loading...');
-            } else {
-              print(snapshot);
-              return Text(
-                'Welcome, ${snapshot.data?['username'] ?? 'Guest'}!',
-                style: getNunito(
-                  fontSize: 27,
-                  fontWeight: FontWeight.w600,
-                  color: MyColors.primaryBlack,
-                ),
-              );
-            }
-          },
-        ),
-        backgroundColor: MyColors.primaryWhite,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: MyColors.martinique,
-            ),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              navigateWithCustomReverseTransition(context, SignupLoginPage());
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Text(
-          'App Content',
-          style: getNunito(fontSize: 20),
-        ),
-      ),
-    );
-  }
-}
-
-class ScanSection extends StatelessWidget {
-  const ScanSection({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Scan Content',
-        style: getNunito(fontSize: 20),
       ),
     );
   }
